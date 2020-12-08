@@ -1,0 +1,129 @@
+﻿<Page
+    x:Class="COGTIVE.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:COGTIVE"
+    xmlns:converter="using:COGTIVE.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"    
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"    
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded"
+    SizeChanged="Page_SizeChanged"
+    x:Name="_MainPage"
+    x:FieldModifier="private">
+    <Page.Resources>
+        <converter:DimensionPercConverter x:Key="DimensionPercConverter"/>
+        <converter:NotBooleanConverter x:Key="NotBooleanConverter"/>
+        <converter:NotBooleanVisibilityConverter x:Key="NotBooleanVisibilityConverter"/>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height=".95*"/>
+            <RowDefinition Height=".05*"/>
+        </Grid.RowDefinitions>
+
+        <!--#region Main Grid-->
+        <Grid Margin="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>                
+            </Grid.ColumnDefinitions>
+
+            <!--#region Left Grid Load File-->
+            <Grid x:Name="_LeftGrid"
+                  x:FieldModifier="private">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height=".12*"/>
+                    <RowDefinition Height=".07*"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Image Source="Assets/app_logo.png"
+                       MaxWidth="256"
+                       Margin="4"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"/>
+
+                <Viewbox Grid.Row="1"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"                         
+                         MinHeight="16"
+                         MaxHeight="24"
+                         Margin="8,0">
+                    <TextBlock 
+                           TextWrapping="Wrap"
+                           Text="Análise de apontamentos a partir de arquivo .CSV" />
+                </Viewbox>
+
+                <Grid Grid.Row="2">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height=".15*"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.RowSpan="2" 
+                            Background="{StaticResource SystemColorHighlightColor}" 
+                            Opacity=".15"
+                            AllowDrop="{Binding ElementName=_MainPage, Path=HasSelectedFile, Converter={StaticResource NotBooleanConverter}, Mode=OneWay}"
+                            DragOver="Border_DragOver"
+                            Drop="Border_Drop">
+                        <Viewbox MaxWidth="450"
+                                 MinWidth="150"
+                                 Visibility="{Binding ElementName=_MainPage, Path=HasSelectedFile, Converter={StaticResource NotBooleanVisibilityConverter}, Mode=OneWay}">
+                            <TextBlock Width="200"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap">OU ARRASTE E SOLTE&#10;O ARQUIVO .CSV AQUI</TextBlock>
+                        </Viewbox>
+                    </Border>
+
+                    <Grid HorizontalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="LoadFileButton" 
+                                x:FieldModifier="private"
+                                Style="{StaticResource UIButtonPrimaryStyle}"
+                                IsEnabled="{Binding ElementName=_MainPage, Path=HasSelectedFile, Converter={StaticResource NotBooleanConverter}, Mode=OneWay}"
+                                Content="Carregar Arquivo"
+                                Click="LoadFileButton_Click"/>
+                        <Button x:Name="ClearFileButton" 
+                                x:FieldModifier="private"
+                                Style="{StaticResource UIButtonErrorStyle}"
+                                IsEnabled="{Binding ElementName=_MainPage, Path=HasSelectedFile, Mode=OneWay}"
+                                Grid.Column="1"
+                                Content="Cancelar Análise"
+                                Click="ClearFileButton_Click"/>
+                    </Grid>
+                    
+                </Grid>
+
+                <local:AnalyzingControl Grid.Row="2"                                        
+                                        Width="{Binding ElementName=_LeftGrid, Path=ActualWidth, Converter={StaticResource DimensionPercConverter}, ConverterParameter=0.48, Mode=OneWay}"
+                                        Height="{Binding ElementName=_LeftGrid, Path=ActualWidth, Converter={StaticResource DimensionPercConverter}, ConverterParameter=0.48, Mode=OneWay}"
+                                        AnalyzingState="{Binding ElementName=_MainPage, Path=AnalyzingState, Mode=TwoWay}"
+                                        SelectedFile="{Binding ElementName=_MainPage, Path=SelectedFile, Mode=OneWay}"
+                                        ProgressValue="{Binding ElementName=_MainPage, Path=ProgressValue, Mode=OneWay}"/>
+
+            </Grid>
+            <!--#endregion -->
+
+            <!--#region Right Grid analyse result-->
+            <!--#endregion -->
+
+        </Grid>
+        <!--#endregion -->
+
+        <!--#region Footer-->
+        <HyperlinkButton Grid.Row="1"                         
+                         Style="{StaticResource UIHyperlinkButtonStyle}"
+                         Content="www.cogtive.com.br"
+                         NavigateUri="https://www.cogtive.com.br" />
+        <!--#endregion -->
+
+    </Grid>
+</Page>

@@ -1,0 +1,15 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">    
+    <Color x:Key="Background">#0C2340</Color>
+    <Color x:Key="Surface">#1B4E8C</Color>
+    <Color x:Key="Primary">#3F84D9</Color>
+    <Color x:Key="Foreground">#FFF</Color>
+    <Color x:Key="Error">#FA3C3C</Color>
+    <Color x:Key="OnAccent">#FFF</Color>
+    <Color x:Key="OnError">#FFF</Color>
+    <Color x:Key="OnSurface">#FFF</Color>
+    <Color x:Key="OnPrimary">#FFF</Color>
+    <Color x:Key="Accent">#6DFA3C</Color>
+    <Color x:Key="SystemAccentColor">#6DFA3C</Color>
+</ResourceDictionary>

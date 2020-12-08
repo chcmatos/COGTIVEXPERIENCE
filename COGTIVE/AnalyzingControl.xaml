@@ -1,0 +1,81 @@
+﻿<UserControl
+    x:Class="COGTIVE.AnalyzingControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:COGTIVE"
+    xmlns:converter="using:COGTIVE.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    x:Name="_Control"
+    x:FieldModifier="private">
+    <UserControl.Resources>
+        <converter:Int32VisibilityConverter x:Key="Int32VisibilityConverter"/>
+        <converter:Int32NotVisibilityConverter x:Key="Int32NotVisibilityConverter"/>
+        <converter:AnalyzingColorConverter x:Key="AnalyzingColorConverter"/>
+        <converter:AnalyzingTextConverter x:Key="AnalyzingTextConverter"/>
+    </UserControl.Resources>
+    <UserControl.Visibility>
+        <Binding RelativeSource="{RelativeSource Mode=Self}"
+                 Path="AnalyzingState"
+                 Mode="OneWay"
+                 Converter="{StaticResource Int32NotVisibilityConverter}"
+                 ConverterParameter="0"/>
+    </UserControl.Visibility>
+    <Border Grid.Row="1" 
+            x:Name="_ContentBorder"
+            x:FieldModifier="private"
+            CornerRadius="12"
+            Background="{Binding ElementName=_Control, 
+                                 Path=AnalyzingState, 
+                                 Converter={StaticResource AnalyzingColorConverter}, 
+                                 Mode=OneWay}">
+        <Grid Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height=".18*"/>
+                <RowDefinition/>
+                <RowDefinition Height=".38*"/>
+            </Grid.RowDefinitions>
+
+            <ProgressBar Margin="4" 
+                         MinHeight="25"                                
+                         CornerRadius="4"
+                         Value="{Binding ElementName=_Control, Path=ProgressValue, Mode=OneWay}" 
+                         Background="{StaticResource SystemChromeAltLowColor}"
+                         Visibility="{Binding ElementName=_Control, Path=AnalyzingState, Converter={StaticResource Int32VisibilityConverter}, ConverterParameter=1, Mode=OneWay}"/>
+
+            <Path Grid.Row="1"
+                  Data="M16,3C8.832031,3 3,8.832031 3,16 3,23.167969 8.832031,29 16,29 23.167969,29 29,23.167969 29,16 29,8.832031 23.167969,3 16,3z M16,5C22.085938,5 27,9.914063 27,16 27,22.085938 22.085938,27 16,27 9.914063,27 5,22.085938 5,16 5,9.914063 9.914063,5 16,5z M12.21875,10.78125L10.78125,12.21875 14.5625,16 10.78125,19.78125 12.21875,21.21875 16,17.4375 19.78125,21.21875 21.21875,19.78125 17.4375,16 21.21875,12.21875 19.78125,10.78125 16,14.5625z"
+                  Fill="{StaticResource OnError}"
+                  Stretch="Uniform"
+                  Visibility="{Binding ElementName=_Control, Path=AnalyzingState, Converter={StaticResource Int32VisibilityConverter}, ConverterParameter=3, Mode=OneWay}"/>
+
+            <Path Grid.Row="1"
+                  Data="M16,3C8.800781,3 3,8.800781 3,16 3,23.199219 8.800781,29 16,29 23.199219,29 29,23.199219 29,16 29,14.601563 28.8125,13.207031 28.3125,11.90625L26.6875,13.5C26.886719,14.300781 27,15.101563 27,16 27,22.101563 22.101563,27 16,27 9.898438,27 5,22.101563 5,16 5,9.898438 9.898438,5 16,5 19,5 21.695313,6.195313 23.59375,8.09375L25,6.6875C22.699219,4.386719,19.5,3,16,3z M27.28125,7.28125L16,18.5625 11.71875,14.28125 10.28125,15.71875 15.28125,20.71875 16,21.40625 16.71875,20.71875 28.71875,8.71875z"
+                  Fill="{StaticResource OnAccent}"
+                  Stretch="Uniform"
+                  Visibility="{Binding ElementName=_Control, Path=AnalyzingState, Converter={StaticResource Int32VisibilityConverter}, ConverterParameter=2, Mode=OneWay}"/>
+
+            <Image Grid.Row="1"
+                   Visibility="{Binding ElementName=_Control, Path=AnalyzingState, Converter={StaticResource Int32VisibilityConverter}, ConverterParameter=1, Mode=OneWay}">
+                <Image.Source>
+                    <BitmapImage x:Name="robotGifImageSource"
+                                 UriSource="Assets/app_robot_load.gif"/>
+                </Image.Source>
+            </Image>
+            
+            <Viewbox Grid.Row="2" 
+                     HorizontalAlignment="Left">
+                <TextBlock Text="{Binding ElementName=_Control, Path=Text, Converter={StaticResource AnalyzingTextConverter}, Mode=OneWay}"
+                           TextWrapping="Wrap"
+                           FontStyle="Italic"
+                           Width="340"
+                           Foreground="{StaticResource SystemChromeAltHighColor}"/>
+            </Viewbox>
+
+        </Grid>
+
+    </Border>
+</UserControl>
