@@ -1,6 +1,8 @@
 ﻿using COGTIVE.Enums;
+using COGTIVE.Model;
 using COGTIVE.Utils;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -34,7 +36,7 @@ namespace COGTIVE
             DependencyProperty.Register(nameof(ProgressValue), typeof(double), typeof(MainPage),
                 new PropertyMetadata(default(double)));
 
-        private static async void OnSelectedFilePropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnSelectedFilePropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if(d is MainPage page && page.IsLoaded)
             {
@@ -45,29 +47,13 @@ namespace COGTIVE
 
                 if(hasFile)
                 {
-                    await page.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, 
-                        new Windows.UI.Core.DispatchedHandler(page.OnSimulateAnalyzing));
+                    page.StartAnalyzingAsync();
                 }
                 else
                 {
                     page.ClearValue(ProgressValueProperty);
                 }
             }
-        }
-
-        private async void OnSimulateAnalyzing()
-        {
-            for(int i=0; i < 100; i++)
-            {
-                this.ProgressValue = i;
-                await Task.Delay(100);
-                if(AnalyzingState != AnalyzingStates.Analyzing)
-                {
-                    return;
-                }
-            }
-
-            AnalyzingState = AnalyzingStates.Done;
         }
         #endregion
 
@@ -187,6 +173,27 @@ namespace COGTIVE
         private void UnloadFileAndCancel()
         {
             this.ClearValue(SelectedFileProperty);
+        }
+
+        private async void StartAnalyzingAsync()
+        {
+            using (Analyzer a = new Analyzer(this.SelectedFile)
+                .SetSeparatorChar(';')
+                .SetKeys("IdApontamento", "DataInicio", "DataFim", "NumeroLote", "IdEvento", "Quantidade")
+                .UseCached())
+            {
+                Gaps gaps = await a.ReduceAsync<Gaps, Apontamento>(ApontamentoHelper.FromEntry, GapsHelper.CalcularGap);
+
+                //Stopwatch sw = Stopwatch.StartNew();
+                //await a.ForEachAsync((e, i) => { });
+                //sw.Stop();
+                //Debug.WriteLine(sw.ElapsedMilliseconds);
+
+                //sw = Stopwatch.StartNew();
+                //await a.ForEachAsync((e, i) => { });
+                //sw.Stop();
+                //Debug.WriteLine(sw.ElapsedMilliseconds);
+            }
         }
     }
 }

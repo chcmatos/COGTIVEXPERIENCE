@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using Windows.Foundation;
 using Windows.UI.Popups;
 
@@ -19,7 +17,7 @@ namespace COGTIVE.Utils
 
         private MessageDialogBuilder(string message)  
         {
-            this.dialog = new MessageDialog(RequireNonNullOrEmpty(message));
+            this.dialog = new MessageDialog(ObjectUtils.RequireNonNullOrEmpty(message));
         }
 
         public static MessageDialogBuilder Builder(string message)
@@ -29,22 +27,12 @@ namespace COGTIVE.Utils
 
         public static MessageDialogBuilder Builder(Exception error)
         {
-            return Builder($"Ocorreu um erro durante a execução:\r\n{RequireNonNull(error).Message}").Title("Error");
-        }
-
-        private static T RequireNonNull<T>(T t, [CallerMemberName] string name = null) where T : class
-        {
-            return t ?? throw new ArgumentNullException(name);
-        }
-
-        private static string RequireNonNullOrEmpty(string str, [CallerMemberName] string name = null)
-        {
-            return RequireNonNull(str, name).Any() ? str : throw new ArgumentException($"\"{name}\" can not be empty!");
+            return Builder($"Ocorreu um erro durante a execução:\r\n{ObjectUtils.RequireNonNull(error).Message}").Title("Error");
         }
 
         public MessageDialogBuilder Title(string title)
         {
-            this.dialog.Title = RequireNonNullOrEmpty(title);
+            this.dialog.Title = ObjectUtils.RequireNonNullOrEmpty(title);
             return this;
         }
 

@@ -134,10 +134,16 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\Apontamento.cs" />
+    <Compile Include="Model\Gaps.cs" />
+    <Compile Include="Utils\Analyzer.cs" />
     <Compile Include="Utils\AnalyzingText.cs" />
+    <Compile Include="Utils\ApontamentoHelper.cs" />
+    <Compile Include="Utils\GapsHelper.cs" />
     <Compile Include="Utils\MessageDialogBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\ResourceHelper.cs" />
+    <Compile Include="Utils\ObjectUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
