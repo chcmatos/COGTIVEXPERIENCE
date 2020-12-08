@@ -17,6 +17,11 @@
         <converter:DimensionPercConverter x:Key="DimensionPercConverter"/>
         <converter:NotBooleanConverter x:Key="NotBooleanConverter"/>
         <converter:NotBooleanVisibilityConverter x:Key="NotBooleanVisibilityConverter"/>
+        <converter:Int32VisibilityConverter x:Key="Int32VisibilityConverter"/>
+        <converter:Int32NotVisibilityConverter x:Key="Int32NotVisibilityConverter"/>
+        <converter:AnalyzingResultTitleTextConverter x:Key="AnalyzingResultTitleTextConverter"/>
+        <converter:StringFormatConverter x:Key="StringFormatConverter"/>
+        <converter:TopLoteConverter x:Key="TopLoteConverter"/>
     </Page.Resources>
 
     <Grid>
@@ -31,34 +36,36 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>                
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height=".12*"/>
+                <RowDefinition Height=".07*"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
 
-            <!--#region Left Grid Load File-->
-            <Grid x:Name="_LeftGrid"
-                  x:FieldModifier="private">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height=".12*"/>
-                    <RowDefinition Height=".07*"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-
-                <Image Source="Assets/app_logo.png"
+            <!--#region Title Left-->
+            <Image Source="Assets/app_logo.png"
                        MaxWidth="256"
                        Margin="4"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"/>
 
-                <Viewbox Grid.Row="1"
-                         HorizontalAlignment="Left"
-                         VerticalAlignment="Top"                         
-                         MinHeight="16"
-                         MaxHeight="24"
-                         Margin="8,0">
-                    <TextBlock 
-                           TextWrapping="Wrap"
-                           Text="Análise de apontamentos a partir de arquivo .CSV" />
-                </Viewbox>
-
-                <Grid Grid.Row="2">
+            <Viewbox Grid.Row="1"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Top"                         
+                     MinHeight="16"
+                     MaxHeight="24"
+                     Margin="8,0">
+                <TextBlock TextWrapping="Wrap"
+                           Text="Análise de apontamentos a partir de arquivo .CSV" />                
+            </Viewbox>
+            <!--#endregion-->
+            
+            <!--#region Left Grid Load File-->
+            <Grid x:Name="_LeftGrid"
+                  x:FieldModifier="private"
+                  Grid.Row="2">
+                
+                <Grid>
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height=".15*"/>
@@ -104,15 +111,121 @@
 
                 <local:AnalyzingControl Grid.Row="2"                                        
                                         Width="{Binding ElementName=_LeftGrid, Path=ActualWidth, Converter={StaticResource DimensionPercConverter}, ConverterParameter=0.48, Mode=OneWay}"
-                                        Height="{Binding ElementName=_LeftGrid, Path=ActualWidth, Converter={StaticResource DimensionPercConverter}, ConverterParameter=0.48, Mode=OneWay}"
+                                        Height="{Binding ElementName=_LeftGrid, Path=ActualHeight, Converter={StaticResource DimensionPercConverter}, ConverterParameter=0.52, Mode=OneWay}"
                                         AnalyzingState="{Binding ElementName=_MainPage, Path=AnalyzingState, Mode=TwoWay}"
                                         SelectedFile="{Binding ElementName=_MainPage, Path=SelectedFile, Mode=OneWay}"
-                                        ProgressValue="{Binding ElementName=_MainPage, Path=ProgressValue, Mode=OneWay}"/>
+                                        ProgressValue="{Binding ElementName=_MainPage, Path=ProgressValue, Mode=OneWay}"
+                                        Error="{Binding ElementName=_MainPage, Path=Error, Mode=OneWay}"/>
 
             </Grid>
             <!--#endregion -->
 
             <!--#region Right Grid analyse result-->
+            <Border Grid.Column="1"
+                    Grid.Row="2"
+                    Margin="8, 0"
+                    Background="{StaticResource SystemChromeBlackHighColor}"
+                    Opacity=".7">
+                <Viewbox MaxWidth="450"
+                         MinWidth="150"
+                         Visibility="{Binding ElementName=_MainPage, Path=AnalyzingState, Converter={StaticResource Int32NotVisibilityConverter}, ConverterParameter=2, Mode=OneWay}">
+                    <TextBlock Width="200"
+                               Opacity=".5"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap">RESULTADO &#10;ANALISE DE DADOS</TextBlock>
+                </Viewbox>
+            </Border>
+            
+            <Viewbox Grid.Column="1"
+                     Grid.RowSpan="2"
+                     HorizontalAlignment="Right"
+                     Margin="8"
+                     Visibility="{Binding ElementName=_MainPage, Path=AnalyzingState, Converter={StaticResource Int32VisibilityConverter}, ConverterParameter=2, Mode=OneWay}">
+                <TextBlock TextAlignment="Right"
+                           TextWrapping="Wrap" 
+                           Text="{Binding ElementName=_MainPage, Path=SelectedFile, Converter={StaticResource AnalyzingResultTitleTextConverter}, Mode=OneWay}"/>
+            </Viewbox>
+            
+            <ListView Grid.Column="1"
+                      Grid.Row="2"
+                      Header="Resultados"
+                      FontSize="32"
+                      Margin="10"
+                      Padding="10"
+                      Visibility="{Binding ElementName=_MainPage, Path=AnalyzingState, Converter={StaticResource Int32VisibilityConverter}, ConverterParameter=2, Mode=OneWay}">
+
+                <ListView.Resources>
+                    <Style TargetType="StackPanel">                        
+                        <Setter Property="Padding" Value="20"/>
+                    </Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource TitleTextBlockStyle}" x:Key="TitleTextStyle">
+                        <Setter Property="Margin" Value="0,4,0,0"/>
+                    </Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}" x:Key="BaseTextStyle">
+                        <Setter Property="Margin" Value="15,12,0,0"/>
+                        <Setter Property="Opacity" Value=".8"/>
+                    </Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}" x:Key="CaptionTextStyle">
+                        <Setter Property="Margin" Value="15,12,0,0"/>
+                        <Setter Property="Opacity" Value=".6"/>
+                    </Style>
+                </ListView.Resources>
+                
+                <StackPanel>
+                    <TextBlock Style="{StaticResource TitleTextStyle}" Text="1. Gaps" />
+                    <TextBlock Style="{StaticResource BaseTextStyle}"
+                               Text="{Binding ElementName=_MainPage, 
+                                              Path=Resultado.Gaps.QuantidadeGaps, 
+                                              Converter={StaticResource StringFormatConverter}, 
+                                              ConverterParameter='Quantidade De Gaps: {0}',
+                                              Mode=OneWay}" />
+                    <TextBlock Style="{StaticResource BaseTextStyle}"
+                               Text="{Binding ElementName=_MainPage, 
+                                              Path=Resultado.Gaps.TotalDuracaoGaps, 
+                                              Converter={StaticResource StringFormatConverter}, 
+                                              ConverterParameter='Período Total: {0} (Dias.Hora:Min:Seg)',
+                                              Mode=OneWay}" />
+                </StackPanel>
+                
+                <StackPanel>
+                    <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="2. Quantidades Produzidas"  />
+                    <TextBlock Style="{StaticResource BaseTextStyle}"
+                               Text="{Binding ElementName=_MainPage, 
+                                              Path=Resultado.QuantidadeProduzida.Total, 
+                                              Converter={StaticResource StringFormatConverter}, 
+                                              ConverterParameter='Quantidade Total Produzida: {0}',
+                                              Mode=OneWay}"/>                    
+                    <TextBlock Style="{StaticResource CaptionTextStyle}"
+                               Text="{Binding ElementName=_MainPage, 
+                                              Path=Resultado.QuantidadeProduzida.Tops, 
+                                              Converter={StaticResource TopLoteConverter}, 
+                                              ConverterParameter=0,
+                                              Mode=OneWay}"/>
+                    <TextBlock Style="{StaticResource CaptionTextStyle}"
+                               Text="{Binding ElementName=_MainPage, 
+                                              Path=Resultado.QuantidadeProduzida.Tops, 
+                                              Converter={StaticResource TopLoteConverter}, 
+                                              ConverterParameter=1,
+                                              Mode=OneWay}"/>
+                    <TextBlock Style="{StaticResource CaptionTextStyle}"
+                               Text="{Binding ElementName=_MainPage, 
+                                              Path=Resultado.QuantidadeProduzida.Tops, 
+                                              Converter={StaticResource TopLoteConverter}, 
+                                              ConverterParameter=2,
+                                              Mode=OneWay}"/>
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="3. Horas de Manutenção"  Style="{StaticResource TitleTextBlockStyle}" />
+                    <TextBlock Style="{StaticResource BaseTextStyle}"
+                               Text="{Binding ElementName=_MainPage, 
+                                              Path=Resultado.Manutencao.PeriodoTotal, 
+                                              Converter={StaticResource StringFormatConverter}, 
+                                              ConverterParameter='Período Total De Manutenção: {0} (Dias.Hora:Min:Seg)',
+                                              Mode=OneWay}" />
+                </StackPanel>
+                
+            </ListView>
             <!--#endregion -->
 
         </Grid>

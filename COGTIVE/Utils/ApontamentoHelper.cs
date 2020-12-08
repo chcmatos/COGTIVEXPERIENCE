@@ -20,9 +20,8 @@ namespace COGTIVE.Utils
                 IDApontamento = long.Parse(entry.ElementAtOrDefault(0)),
                 DataInicio = ToDateTime(entry.ElementAtOrDefault(1)),
                 DataFim = ToDateTime(entry.ElementAtOrDefault(2)),
-                NumerLote = entry.ElementAtOrDefault(3),
-                IDEvento = int.Parse(entry.ElementAtOrDefault(4)),
-                Quantidade = int.Parse(entry.ElementAtOrDefault(5))
+                Lote = new Lote(entry.ElementAtOrDefault(3), int.Parse(entry.ElementAtOrDefault(5))),
+                IDEvento = int.Parse(entry.ElementAtOrDefault(4))
             };
         }
     }

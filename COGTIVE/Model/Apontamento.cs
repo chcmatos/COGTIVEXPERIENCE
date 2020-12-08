@@ -10,10 +10,25 @@ namespace COGTIVE.Model
 
         public DateTime DataFim { get; set; }
 
-        public string NumerLote { get; set; }
+        public Lote Lote { get; set; }
 
         public int IDEvento { get; set; }
 
-        public int Quantidade { get; set; }
+        public bool IsApontamentoProducao()
+        {
+            switch (this.IDEvento)
+            {
+                case 1:
+                case 2:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public bool IsApontamentoManutencao()
+        {
+            return this.IDEvento == 19;
+        }
     }
 }

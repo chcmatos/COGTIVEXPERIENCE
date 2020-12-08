@@ -1,5 +1,6 @@
 ﻿using COGTIVE.Enums;
 using COGTIVE.Utils;
+using System;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,6 +17,10 @@ namespace COGTIVE
         internal static readonly DependencyProperty SelectedFileProperty =
             DependencyProperty.Register(nameof(SelectedFile), typeof(IStorageItem), typeof(AnalyzingControl),
                 new PropertyMetadata(default(IStorageItem), OnSelectedFilePropertyChangedCallback));
+
+        internal static readonly DependencyProperty ErrorProperty =
+            DependencyProperty.Register(nameof(Error), typeof(Exception), typeof(AnalyzingControl),
+                new PropertyMetadata(default(Exception), OnErrorPropertyChangedCallback));
 
         private static readonly DependencyProperty AnalyzingTextProperty =
             DependencyProperty.Register(nameof(Text), typeof(AnalyzingText), typeof(AnalyzingControl),
@@ -38,6 +43,14 @@ namespace COGTIVE
             if (d is AnalyzingControl control)
             {
                 control.Text = new AnalyzingText(control.AnalyzingState, (IStorageItem)e.NewValue);
+            }
+        }
+
+        private static void OnErrorPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is AnalyzingControl control)
+            {
+                control.Text = new AnalyzingText(control.AnalyzingState, control.SelectedFile, e.NewValue as Exception);
             }
         }
         #endregion
@@ -64,6 +77,12 @@ namespace COGTIVE
         {
             get => (double) this.GetValue(ProgressValueProperty);
             set => this.SetValue(ProgressValueProperty, value);
+        }
+
+        public Exception Error
+        {
+            get => (Exception)this.GetValue(ErrorProperty);
+            set => this.SetValue(ErrorProperty, value);
         }
 
         public AnalyzingControl()

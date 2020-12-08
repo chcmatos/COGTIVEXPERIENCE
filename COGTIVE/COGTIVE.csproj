@@ -123,6 +123,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\AnalyzingColorConverter.cs" />
+    <Compile Include="Converters\AnalyzingResultTitleTextConverter.cs" />
     <Compile Include="Converters\AnalyzingTextConverter.cs" />
     <Compile Include="Converters\NotBooleanVisibilityConverter.cs" />
     <Compile Include="Converters\BooleanVisibilityConverter.cs" />
@@ -130,20 +131,31 @@
     <Compile Include="Converters\Int32NotVisibilityConverter.cs" />
     <Compile Include="Converters\Int32VisibilityConverter.cs" />
     <Compile Include="Converters\NotBooleanConverter.cs" />
+    <Compile Include="Converters\StringFormatConverter.cs" />
+    <Compile Include="Converters\TopLoteConverter.cs" />
     <Compile Include="Enums\AnalyzingStates.cs" />
+    <Compile Include="Events\AnalyzerProgressEventArgs.cs" />
+    <Compile Include="Events\AnalyzerRequestCancelEventHandler.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Apontamento.cs" />
     <Compile Include="Model\Gaps.cs" />
+    <Compile Include="Model\Lote.cs" />
+    <Compile Include="Model\Manutencao.cs" />
+    <Compile Include="Model\QuantidadeProduzida.cs" />
+    <Compile Include="Model\Resultado.cs" />
     <Compile Include="Utils\Analyzer.cs" />
     <Compile Include="Utils\AnalyzingText.cs" />
     <Compile Include="Utils\ApontamentoHelper.cs" />
     <Compile Include="Utils\GapsHelper.cs" />
+    <Compile Include="Utils\ManutencaoHelper.cs" />
     <Compile Include="Utils\MessageDialogBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\QuantidadeProduzidaHelper.cs" />
     <Compile Include="Utils\ResourceHelper.cs" />
     <Compile Include="Utils\ObjectUtils.cs" />
+    <Compile Include="Utils\ResultadoHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

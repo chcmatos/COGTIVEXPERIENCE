@@ -3,6 +3,7 @@ using COGTIVE.Model;
 using COGTIVE.Utils;
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -36,6 +37,14 @@ namespace COGTIVE
             DependencyProperty.Register(nameof(ProgressValue), typeof(double), typeof(MainPage),
                 new PropertyMetadata(default(double)));
 
+        internal static readonly DependencyProperty ErrorProperty =
+            DependencyProperty.Register(nameof(Error), typeof(Exception), typeof(MainPage),
+                new PropertyMetadata(default(Exception)));
+
+        internal static readonly DependencyProperty ResultadoProperty =
+            DependencyProperty.Register(nameof(Resultado), typeof(Resultado), typeof(MainPage),
+                new PropertyMetadata(default(Resultado)));
+
         private static void OnSelectedFilePropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if(d is MainPage page && page.IsLoaded)
@@ -45,7 +54,9 @@ namespace COGTIVE
                     AnalyzingStates.Analyzing :
                     AnalyzingStates.Sleeping;
 
-                if(hasFile)
+                page.ClearValue(ResultadoProperty);
+
+                if (hasFile)
                 {
                     page.StartAnalyzingAsync();
                 }
@@ -79,6 +90,18 @@ namespace COGTIVE
         {
             get => (double)this.GetValue(ProgressValueProperty);
             set => this.SetValue(ProgressValueProperty, value);
+        }
+
+        internal Exception Error
+        {
+            get => (Exception)this.GetValue(ErrorProperty);
+            set => this.SetValue(ErrorProperty, value);
+        }
+
+        internal Resultado Resultado
+        {
+            get => (Resultado)this.GetValue(ResultadoProperty);
+            set => this.SetValue(ResultadoProperty, value);
         }
 
         public MainPage()
@@ -180,20 +203,48 @@ namespace COGTIVE
             using (Analyzer a = new Analyzer(this.SelectedFile)
                 .SetSeparatorChar(';')
                 .SetKeys("IdApontamento", "DataInicio", "DataFim", "NumeroLote", "IdEvento", "Quantidade")
+                .SetVisualContext(this)
                 .UseCached())
             {
-                Gaps gaps = await a.ReduceAsync<Gaps, Apontamento>(ApontamentoHelper.FromEntry, GapsHelper.CalcularGap);
+                a.Progress  += Analyzer_Progress;
+                a.Error     += Analyzer_Error;
+                a.Done      += Analyzer_Done;
+                a.Cancel    += Analyzer_Cancel;
 
-                //Stopwatch sw = Stopwatch.StartNew();
-                //await a.ForEachAsync((e, i) => { });
-                //sw.Stop();
-                //Debug.WriteLine(sw.ElapsedMilliseconds);
-
-                //sw = Stopwatch.StartNew();
-                //await a.ForEachAsync((e, i) => { });
-                //sw.Stop();
-                //Debug.WriteLine(sw.ElapsedMilliseconds);
+                #if DEBUG
+                Stopwatch sw = Stopwatch.StartNew();
+                #endif
+                Resultado res = await a.ReduceAsync(ApontamentoHelper.FromEntry, 
+                    ResultadoHelper.CalcularResultado, new Resultado());
+                res?.QuantidadeProduzida?.UpdateTopList();
+                this.Resultado = res;
+                #if DEBUG
+                sw.Stop();
+                Debug.WriteLine($"Apontamentos analisados em {sw.Elapsed}");
+                #endif
             }
+        }
+
+        private bool Analyzer_Cancel(object sender, EventArgs args)
+        {
+            return !this.HasSelectedFile;
+        }
+
+        private void Analyzer_Done(object sender, EventArgs e)
+        {
+            this.AnalyzingState = AnalyzingStates.Done;
+            this.Error = null;
+        }
+
+        private void Analyzer_Error(object sender, Exception e)
+        {
+            this.AnalyzingState = AnalyzingStates.Error;
+            this.Error = e;
+        }
+
+        private void Analyzer_Progress(object sender, Events.AnalyzerProgressEventArgs e)
+        {
+            this.ProgressValue = e.Percentage;
         }
     }
 }
