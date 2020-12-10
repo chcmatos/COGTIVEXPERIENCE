@@ -203,8 +203,7 @@ namespace COGTIVE
             using (Analyzer a = new Analyzer(this.SelectedFile)
                 .SetSeparatorChar(';')
                 .SetKeys("IdApontamento", "DataInicio", "DataFim", "NumeroLote", "IdEvento", "Quantidade")
-                .SetVisualContext(this)
-                .UseCached())
+                .SetVisualContext(this))
             {
                 a.Progress  += Analyzer_Progress;
                 a.Error     += Analyzer_Error;

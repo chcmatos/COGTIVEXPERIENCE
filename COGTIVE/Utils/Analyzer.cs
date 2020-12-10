@@ -37,6 +37,11 @@ namespace COGTIVE.Utils
         
         public event AnalyzerRequestCancelEventHandler Cancel;
 
+        ~Analyzer()
+        {
+            this.Dispose(false);
+        }
+
         public Analyzer(IStorageItem storageItem)
         {
             this.storageItem = ObjectUtils.RequireNonNull(storageItem);
@@ -145,7 +150,7 @@ namespace COGTIVE.Utils
             return ReadEntriesAsync();
         }
         
-        public long GetFileSize()
+        private long GetFileSize()
         {
             this.RequireNonDisposed();
 
